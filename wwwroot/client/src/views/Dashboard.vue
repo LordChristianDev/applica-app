@@ -1,26 +1,26 @@
 <template>
-  <div class="h-full flex flex-col">
-    <header class="bg-white border-b border-gray-200 px-8 py-6">
+  <div class="flex flex-col h-full">
+    <header class="px-8 py-6 bg-white border-b border-gray-200">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
           <p class="text-sm text-gray-600 mt-1">Manage your job applications</p>
         </div>
-        <button @click="openModal()" class="btn btn-primary flex items-center space-x-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
+
+        <button @click="openModal()" class="space-x-2 btn btn-primary flex items-center">
+          <PlusIcon />
           <span>Add Application</span>
         </button>
       </div>
 
-      <div class="grid grid-cols-4 gap-4 mt-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4 mt-6">
         <div v-for="(count, status) in statusCounts" :key="status" class="card p-4">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm text-gray-600">{{ status }}</p>
               <p class="text-2xl font-bold text-gray-900 mt-1">{{ count }}</p>
             </div>
+            
             <div :class="getStatusIconClass(status)" class="w-12 h-12 rounded-lg flex items-center justify-center">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -31,8 +31,8 @@
       </div>
     </header>
 
-    <div class="flex-1 overflow-x-auto px-8 py-6">
-      <div v-if="totalApplications > 0" class="grid grid-cols-4 gap-6 min-w-max">
+    <div class="px-8 py-6 flex-1 overflow-x-auto">
+      <div v-if="totalApplications > 0" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         <KanbanColumn
           v-for="status in statuses"
           :key="status"
@@ -70,13 +70,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useApplications } from '@/composables/useApplications'
-import KanbanColumn from '@/components/KanbanColumn.vue'
-import ApplicationModal from '@/components/ApplicationModal.vue'
+import { ref } from 'vue';
+
+import { useApplications } from '@/composables/useApplications';
+import { getStatusIconClass } from '@/lib/helpers';
+
+import PlusIcon from '@/assets/icons/PlusIcon.vue';
+import KanbanColumn from '@/components/KanbanColumn.vue';
+import ApplicationModal from '@/components/ApplicationModal.vue';
 
 const { 
-  applications,
   statusCounts,
   totalApplications,
   addApplication,
@@ -84,40 +87,31 @@ const {
   deleteApplication,
   updateApplicationStatus,
   getApplicationsByStatus
-} = useApplications()
+} = useApplications();
 
-const statuses = ['Applied', 'Interview', 'Offer', 'Rejected']
-const showModal = ref(false)
-const selectedApplication = ref(null)
+const statuses = ['Applied', 'Interview', 'Offer', 'Rejected'];
+const showModal = ref(false);
+const selectedApplication = ref(null);
 
 const openModal = (application = null) => {
-  selectedApplication.value = application
-  showModal.value = true
-}
+  selectedApplication.value = application;
+  showModal.value = true;
+};
 
 const handleSave = (formData) => {
   if (selectedApplication.value) {
-    updateApplication(selectedApplication.value.id, formData)
+    updateApplication(selectedApplication.value.id, formData);
   } else {
-    addApplication(formData)
+    addApplication(formData);
   }
-}
+};
 
 const handleDelete = (id) => {
-  deleteApplication(id)
-}
+  deleteApplication(id);
+};
 
 const handleStatusChange = (applicationId, newStatus) => {
-  updateApplicationStatus(applicationId, newStatus)
-}
+  updateApplicationStatus(applicationId, newStatus);
+};
 
-const getStatusIconClass = (status) => {
-  const classes = {
-    Applied: 'bg-blue-500',
-    Interview: 'bg-yellow-500',
-    Offer: 'bg-green-500',
-    Rejected: 'bg-red-500'
-  }
-  return classes[status] || 'bg-gray-500'
-}
 </script>

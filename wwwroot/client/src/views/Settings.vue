@@ -7,7 +7,7 @@
       </div>
     </header>
 
-    <div class="px-8 py-6 max-w-3xl">
+    <div class="px-8 py-6">
       <div class="space-y-6">
         <div class="card p-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-4">Data Management</h2>
@@ -70,27 +70,21 @@
           <h2 class="text-lg font-semibold text-gray-900 mb-4">Future Enhancements</h2>
           <ul class="space-y-2 text-sm text-gray-600">
             <li class="flex items-start">
-              <svg class="w-5 h-5 text-primary-500 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
+              <CheckIcon />
               Backend integration with .NET API
             </li>
             <li class="flex items-start">
-              <svg class="w-5 h-5 text-primary-500 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
+              <CheckIcon />
               User authentication and cloud sync
             </li>
+
             <li class="flex items-start">
-              <svg class="w-5 h-5 text-primary-500 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
+                <CheckIcon />
               Email reminders and deadline tracking
             </li>
+
             <li class="flex items-start">
-              <svg class="w-5 h-5 text-primary-500 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
+                <CheckIcon />
               Advanced search and filtering
             </li>
           </ul>
@@ -101,18 +95,20 @@
 </template>
 
 <script setup>
-import { useApplications } from '../composables/useApplications'
+import { useApplications } from '@/composables/useApplications';
 
-const { totalApplications, exportToCSV } = useApplications()
+import CheckIcon from '@/assets/icons/CheckIcon.vue';
+
+const { totalApplications, exportToCSV } = useApplications();
 
 const handleExport = () => {
-  exportToCSV()
-}
+  exportToCSV();
+};
 
 const handleClearData = () => {
   if (confirm('Are you sure you want to delete all applications? This action cannot be undone.')) {
     localStorage.removeItem('jobtrackr_applications')
-    window.location.reload()
+    window.location.reload();
   }
-}
+};
 </script>

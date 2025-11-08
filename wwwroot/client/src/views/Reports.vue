@@ -6,10 +6,9 @@
           <h1 class="text-2xl font-bold text-gray-900">Reports</h1>
           <p class="text-sm text-gray-600 mt-1">Visualize your application progress</p>
         </div>
+
         <button @click="exportToCSV" class="btn btn-primary flex items-center space-x-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
+          <DocumentIcon />
           <span>Export CSV</span>
         </button>
       </div>
@@ -39,14 +38,17 @@
             <div class="text-3xl font-bold text-primary-600">{{ totalApplications }}</div>
             <div class="text-sm text-gray-600 mt-1">Total Applications</div>
           </div>
+          
           <div class="text-center">
             <div class="text-3xl font-bold text-yellow-600">{{ statusCounts.Interview }}</div>
             <div class="text-sm text-gray-600 mt-1">In Interview</div>
           </div>
+
           <div class="text-center">
             <div class="text-3xl font-bold text-green-600">{{ statusCounts.Offer }}</div>
             <div class="text-sm text-gray-600 mt-1">Offers Received</div>
           </div>
+
           <div class="text-center">
             <div class="text-3xl font-bold text-blue-600">{{ successRate }}%</div>
             <div class="text-sm text-gray-600 mt-1">Response Rate</div>
@@ -86,15 +88,27 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Doughnut, Bar } from 'vue-chartjs'
-import { Chart as ChartJS, ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
-import { format } from 'date-fns'
-import { useApplications } from '../composables/useApplications'
+import { computed } from 'vue';
+import { 
+  Chart as ChartJS, 
+  ArcElement, 
+  CategoryScale, 
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend } from 'chart.js';
+import { format } from 'date-fns';
+import { Doughnut, Bar } from 'vue-chartjs';
+
+import { useApplications } from '@/composables/useApplications';
+import { getStatusClass } from '@/lib/helpers';
+
+import DocumentIcon from '@/assets/icons/DocumentIcon.vue';
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const { applications, statusCounts, totalApplications, exportToCSV } = useApplications()
+const { applications, statusCounts, totalApplications, exportToCSV } = useApplications();
 
 const doughnutData = computed(() => ({
   labels: ['Applied', 'Interview', 'Offer', 'Rejected'],
@@ -111,7 +125,7 @@ const doughnutData = computed(() => ({
       borderColor: '#ffffff'
     }
   ]
-}))
+}));
 
 const barData = computed(() => ({
   labels: ['Applied', 'Interview', 'Offer', 'Rejected'],
@@ -127,7 +141,7 @@ const barData = computed(() => ({
       backgroundColor: ['#3b82f6', '#eab308', '#22c55e', '#ef4444']
     }
   ]
-}))
+}));
 
 const chartOptions = {
   responsive: true,
@@ -137,36 +151,26 @@ const chartOptions = {
       position: 'bottom'
     }
   }
-}
+};
 
 const successRate = computed(() => {
-  const total = totalApplications.value
-  if (total === 0) return 0
-  const responded = statusCounts.value.Interview + statusCounts.value.Offer
-  return Math.round((responded / total) * 100)
-})
+  const total = totalApplications.value;
+  if (total === 0) return 0;
+  const responded = statusCounts.value.Interview + statusCounts.value.Offer;
+  return Math.round((responded / total) * 100);
+});
 
 const recentApplications = computed(() => {
   return [...applications.value]
     .sort((a, b) => new Date(b.dateApplied) - new Date(a.dateApplied))
-    .slice(0, 10)
-})
+    .slice(0, 10);
+});
 
 const formatDate = (date) => {
   try {
-    return format(new Date(date), 'MMM d, yyyy')
+    return format(new Date(date), 'MMM d, yyyy');
   } catch {
-    return date
+    return date;
   }
-}
-
-const getStatusClass = (status) => {
-  const classes = {
-    Applied: 'bg-blue-100 text-blue-700',
-    Interview: 'bg-yellow-100 text-yellow-700',
-    Offer: 'bg-green-100 text-green-700',
-    Rejected: 'bg-red-100 text-red-700'
-  }
-  return classes[status] || 'bg-gray-100 text-gray-700'
-}
+};
 </script>
