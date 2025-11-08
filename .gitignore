@@ -107,6 +107,9 @@ $RECYCLE.BIN/
 .LSOverride
 ._*
 
+# Migrations
+Migrations/
+
 # Development scripts (optional - remove if you want to commit them)
 # start-dev.bat
 # start-dev.ps1
