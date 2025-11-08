@@ -34,17 +34,17 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { format } from 'date-fns'
+import { computed } from 'vue';
+import { format } from 'date-fns';
 
 const props = defineProps({
   application: {
     type: Object,
     required: true
   }
-})
+});
 
-defineEmits(['edit'])
+defineEmits(['edit']);
 
 const formattedDate = computed(() => {
   try {
@@ -52,7 +52,7 @@ const formattedDate = computed(() => {
   } catch {
     return props.application.dateApplied
   }
-})
+});
 
 const statusColor = computed(() => {
   const colors = {
@@ -62,13 +62,12 @@ const statusColor = computed(() => {
     Rejected: 'bg-red-100 text-red-700'
   }
   return colors[props.application.status] || 'bg-gray-100 text-gray-700'
-})
+});
 </script>
 
 <style scoped>
 .line-clamp-2 {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
