@@ -1,8 +1,26 @@
+using Microsoft.EntityFrameworkCore;
+
+using DotNetEnv;
+using ApplicaApp.Data;
+using ApplicaApp.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Load .env file
+Env.Load();
+
+// Get connection string from environment or appsettings
+builder.Services.AddDbContext<ApplicaAppContext>(options =>
+    options.UseNpgsql(Environment.GetEnvironmentVariable("NEON_CONNECTION")));
 
 // Add services to the container.
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+
+// Registered Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
 
 var app = builder.Build();
 
@@ -15,13 +33,6 @@ if (builder.Environment.IsDevelopment())
 else
 {
     app.UseHttpsRedirection();
-}
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseCors("AllowVite");
 }
 
 // Enable serving static files from wwwroot
