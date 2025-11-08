@@ -1,4 +1,4 @@
-export const getStatusIconClass = (status) => {
+export const getStatusIconClass = (status: 'Applied' | 'Interview' | 'Offer' | 'Rejected') => {
 	const classes = {
 		Applied: 'bg-blue-500',
 		Interview: 'bg-yellow-500',
@@ -8,7 +8,7 @@ export const getStatusIconClass = (status) => {
 	return classes[status] || 'bg-gray-500'
 };
 
-export const getStatusClass = (status) => {
+export const getStatusClass = (status: 'Applied' | 'Interview' | 'Offer' | 'Rejected') => {
 	const classes = {
 		Applied: 'bg-blue-100 text-blue-700',
 		Interview: 'bg-yellow-100 text-yellow-700',
