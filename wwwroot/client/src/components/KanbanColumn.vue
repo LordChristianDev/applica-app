@@ -1,42 +1,3 @@
-<script setup>
-import { computed } from 'vue'
-import draggable from 'vuedraggable'
-import JobCard from './JobCard.vue'
-
-const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  status: {
-    type: String,
-    required: true
-  },
-  applications: {
-    type: Array,
-    required: true
-  }
-})
-
-const emit = defineEmits(['edit', 'statusChange'])
-
-const statusColorClass = computed(() => {
-  const colors = {
-    Applied: 'bg-blue-500',
-    Interview: 'bg-yellow-500',
-    Offer: 'bg-green-500',
-    Rejected: 'bg-red-500'
-  }
-  return colors[props.status] || 'bg-gray-500'
-})
-
-const handleChange = (event) => {
-  if (event.added) {
-    emit('statusChange', event.added.element.id, props.status)
-  }
-}
-</script>
-
 <template>
   <div class="flex flex-col bg-gray-100 rounded-lg p-4 min-h-[500px]">
     <div class="flex items-center justify-between mb-4">
@@ -73,3 +34,43 @@ const handleChange = (event) => {
     </div>
   </div>
 </template>
+
+<script setup>
+import { computed } from 'vue';
+import draggable from 'vuedraggable';
+
+import JobCard from '@/components/JobCard.vue';
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: String,
+    required: true
+  },
+  applications: {
+    type: Array,
+    required: true
+  }
+})
+
+const emit = defineEmits(['edit', 'statusChange'])
+
+const statusColorClass = computed(() => {
+  const colors = {
+    Applied: 'bg-blue-500',
+    Interview: 'bg-yellow-500',
+    Offer: 'bg-green-500',
+    Rejected: 'bg-red-500'
+  }
+  return colors[props.status] || 'bg-gray-500'
+})
+
+const handleChange = (event) => {
+  if (event.added) {
+    emit('statusChange', event.added.element.id, props.status)
+  }
+}
+</script>
