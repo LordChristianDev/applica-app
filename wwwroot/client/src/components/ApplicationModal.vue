@@ -3,7 +3,7 @@
     <transition name="modal">
       <div v-if="modelValue" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-          <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="close"></div>
+          <div class="fixed inset-0 transition-opacity bg-gray-800/50 bg-opacity-75" @click="close"></div>
 
           <div class="relative inline-block w-full max-w-lg p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
             <div class="flex items-center justify-between mb-6">
@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
   modelValue: {
@@ -108,11 +108,11 @@ const props = defineProps({
     type: Object,
     default: null
   }
-})
+});
 
-const emit = defineEmits(['update:modelValue', 'save', 'delete'])
+const emit = defineEmits(['update:modelValue', 'save', 'delete']);
 
-const isEditing = computed(() => !!props.application)
+const isEditing = computed(() => !!props.application);
 
 const defaultFormData = {
   company: '',
@@ -120,9 +120,9 @@ const defaultFormData = {
   dateApplied: new Date().toISOString().split('T')[0],
   status: 'Applied',
   notes: ''
-}
+};
 
-const formData = ref({ ...defaultFormData })
+const formData = ref({ ...defaultFormData });
 
 watch(() => props.application, (newApp) => {
   if (newApp) {
@@ -130,26 +130,26 @@ watch(() => props.application, (newApp) => {
   } else {
     formData.value = { ...defaultFormData }
   }
-}, { immediate: true })
+}, { immediate: true });
 
 const close = () => {
   emit('update:modelValue', false)
   setTimeout(() => {
     formData.value = { ...defaultFormData }
   }, 300)
-}
+};
 
 const handleSubmit = () => {
   emit('save', { ...formData.value })
   close()
-}
+};
 
 const handleDelete = () => {
   if (confirm('Are you sure you want to delete this application?')) {
     emit('delete', props.application.id)
     close()
   }
-}
+};
 </script>
 
 <style scoped>
