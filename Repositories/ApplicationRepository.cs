@@ -45,10 +45,10 @@ namespace ApplicaApp.Repositories
 				.ToListAsync();
 		}
 
-		public async Task<Application> FetchByIdAsync(int id)
+		public async Task<Application?> FetchByIdAsync(int id)
 		{
 			return await _context.Applications
-				.FirstAsync(p => p.Id == id);
+				.FirstOrDefaultAsync(p => p.Id == id);
 		}
 
 		public async Task<Application> CreateAsync(Application application)
