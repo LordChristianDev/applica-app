@@ -84,7 +84,7 @@ namespace ApplicaApp.Controllers
             return Ok(updatedProduct);
         }
 
-        [HttpPost("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Application>> Delete(int id)
         {
             var deletedProduct = await _repository.DeleteAsync(id);
