@@ -29,16 +29,16 @@ namespace ApplicaApp.Repositories
 				.ToListAsync();
         }
 
-		public async Task<User> FetchByIdAsync(int id)
+		public async Task<User?> FetchByIdAsync(int id)
 		{
 			return await _context.Users
-				.FirstAsync(p => p.Id == id);
+				.FirstOrDefaultAsync(p => p.Id == id);
 		}
 
-		public async Task<User> FetchByUidAsync(string uid)
+		public async Task<User?> FetchByUidAsync(string uid)
 		{
 			return await _context.Users
-				.FirstAsync(p => p.Uid == uid);
+				.FirstOrDefaultAsync(p => p.Uid == uid);
 		}
 
 		public async Task<User> CreateAsync(User user)
