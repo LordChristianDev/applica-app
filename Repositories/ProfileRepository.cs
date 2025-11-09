@@ -30,16 +30,16 @@ namespace ApplicaApp.Repositories
 				.ToListAsync();
 		}
 
-		public async Task<Profile> FetchByIdAsync(int id)
+		public async Task<Profile?> FetchByIdAsync(int id)
 		{
 			return await _context.Profiles
-				.FirstAsync(p => p.Id == id);
+				.FirstOrDefaultAsync(p => p.Id == id);
 		}
 
-		public async Task<Profile> FetchByUserIdAsync(int userId)
+		public async Task<Profile?> FetchByUserIdAsync(int userId)
 		{
 			return await _context.Profiles
-				.FirstAsync(p => p.UserId == userId);
+				.FirstOrDefaultAsync(p => p.UserId == userId);
 		}
 
 		public async Task<Profile> CreateAsync(Profile profile)
