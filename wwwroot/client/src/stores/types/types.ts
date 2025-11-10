@@ -22,7 +22,6 @@ export type ProfileProp = {
 export type UserProp = {
 	Id: number;
 	Uid: string;
-	Name: string;
 	CreatedAt: string;
 	LastLogin: string;
 };
