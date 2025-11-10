@@ -94,7 +94,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useApplications } from '@/composables/useApplications';
 
 import CheckIcon from '@/assets/icons/CheckIcon.vue';

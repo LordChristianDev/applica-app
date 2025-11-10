@@ -69,13 +69,13 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="app in recentApplications" :key="app.id">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ app.company }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ app.position }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatDate(app.dateApplied) }}</td>
+              <tr v-for="app in recentApplications" :key="app.Id">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ app.Company }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ app.Position }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatDate(app.DateApplied) }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span :class="getStatusClass(app.status)" class="px-2 py-1 text-xs font-medium rounded-full">
-                    {{ app.status }}
+                  <span :class="getStatusClass(app.Status)" class="px-2 py-1 text-xs font-medium rounded-full">
+                    {{ app.Status }}
                   </span>
                 </td>
               </tr>
@@ -87,7 +87,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { 
   Chart as ChartJS, 
@@ -148,7 +148,7 @@ const chartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: {
-      position: 'bottom'
+      position: 'bottom' as const,
     }
   }
 };
@@ -162,11 +162,11 @@ const successRate = computed(() => {
 
 const recentApplications = computed(() => {
   return [...applications.value]
-    .sort((a, b) => new Date(b.dateApplied) - new Date(a.dateApplied))
+    .sort((a, b) => new Date(b.DateApplied).getTime() - new Date(a.DateApplied).getTime())
     .slice(0, 10);
 });
 
-const formatDate = (date) => {
+const formatDate = (date: string) => {
   try {
     return format(new Date(date), 'MMM d, yyyy');
   } catch {

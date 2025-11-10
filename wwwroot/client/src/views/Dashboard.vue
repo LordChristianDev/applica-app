@@ -69,7 +69,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
 import { useApplications } from '@/composables/useApplications';
@@ -78,6 +78,8 @@ import { getStatusIconClass } from '@/lib/helpers';
 import PlusIcon from '@/assets/icons/PlusIcon.vue';
 import KanbanColumn from '@/components/KanbanColumn.vue';
 import ApplicationModal from '@/components/ApplicationModal.vue';
+
+import type { ApplicationProp } from '@/stores/types/types';
 
 const { 
   statusCounts,
@@ -98,19 +100,19 @@ const openModal = (application = null) => {
   showModal.value = true;
 };
 
-const handleSave = (formData) => {
+const handleSave = (formData: Partial<ApplicationProp>) => {
   if (selectedApplication.value) {
-    updateApplication(selectedApplication.value.id, formData);
+    updateApplication(selectedApplication.value, formData);
   } else {
     addApplication(formData);
   }
 };
 
-const handleDelete = (id) => {
+const handleDelete = (id: number) => {
   deleteApplication(id);
 };
 
-const handleStatusChange = (applicationId, newStatus) => {
+const handleStatusChange = (applicationId: number, newStatus: "Applied" | "Interview" | "Offer" | "Rejected") => {
   updateApplicationStatus(applicationId, newStatus);
 };
 
