@@ -22,9 +22,6 @@
       >
         <component :is="item.icon" class="w-5 h-5" />
         <span>{{ item.name }}</span>
-        <span v-if="item.badge" class="ml-auto px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
-          {{ item.badge }}
-        </span>
       </router-link>
     </nav>
 
@@ -61,9 +58,6 @@
       >
         <component :is="item.icon" class="w-5 h-5" />
         <span>{{ item.name }}</span>
-        <span v-if="item.badge" class="ml-auto px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
-          {{ item.badge }}
-        </span>
       </router-link>
     </nav>
 
@@ -76,10 +70,9 @@
   </Drawer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 import Drawer from 'primevue/drawer';
-import Avatar from 'primevue/avatar';
 
 import { useApplications } from '@/composables/useApplications';
 
