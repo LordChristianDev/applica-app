@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 
-import type { ApplicationProp } from '@/stores/services/dashboard-types';
-import { mockApplications } from '@/stores/types/dashboard-services';
+import type { ApplicationProp } from '@/stores/types/types';
+import { mockApplications } from '@/stores/services/application-services';
 
 export const useApplicationsStore = defineStore('applications', () => {
 	const applications = ref<ApplicationProp[]>([]);
@@ -13,18 +13,17 @@ export const useApplicationsStore = defineStore('applications', () => {
 		isInitialized.value = true;
 	}
 
-	const addApplication = (application: any) => {
-		const newApplication: ApplicationProp = {
+	const addApplication = (application: Partial<ApplicationProp>) => {
+		const newApplication: Partial<ApplicationProp> = {
 			...application,
-			id: Date.now().toString(),
-			date_applied: application.dateApplied || new Date().toISOString().split('T')[0]
+			DateApplied: application.DateApplied || new Date().toISOString().split('T')[0]
 		}
-		applications.value.push(newApplication);
+		applications.value.push(newApplication as ApplicationProp);
 		return newApplication;
 	};
 
 	const updateApplication = (id: number, updates: Partial<ApplicationProp>) => {
-		const index = applications.value.findIndex(app => app.id === id);
+		const index = applications.value.findIndex(app => app.Id === id);
 		if (index !== -1) {
 			applications.value[index] = { ...applications.value[index], ...updates };
 			return applications.value[index];
@@ -33,7 +32,7 @@ export const useApplicationsStore = defineStore('applications', () => {
 	};
 
 	const deleteApplication = (id: number) => {
-		const index = applications.value.findIndex(app => app.id === id)
+		const index = applications.value.findIndex(app => app.Id === id)
 		if (index !== -1) {
 			applications.value.splice(index, 1)
 			return true
@@ -42,19 +41,19 @@ export const useApplicationsStore = defineStore('applications', () => {
 	};
 
 	const updateApplicationStatus = (id: number, newStatus: "Applied" | "Interview" | "Offer" | "Rejected") => {
-		return updateApplication(id, { status: newStatus })
+		return updateApplication(id, { Status: newStatus })
 	};
 
 	const getApplicationsByStatus = (status: string) => {
-		return applications.value.filter((app: any) => app.status === status)
+		return applications.value.filter((app: ApplicationProp) => app.Status === status);
 	};
 
 	const statusCounts = computed(() => {
 		return {
-			Applied: applications.value.filter((app: any) => app.status === 'Applied').length,
-			Interview: applications.value.filter((app: any) => app.status === 'Interview').length,
-			Offer: applications.value.filter((app: any) => app.status === 'Offer').length,
-			Rejected: applications.value.filter((app: any) => app.status === 'Rejected').length
+			Applied: applications.value.filter((app: ApplicationProp) => app.Status === 'Applied').length,
+			Interview: applications.value.filter((app: ApplicationProp) => app.Status === 'Interview').length,
+			Offer: applications.value.filter((app: ApplicationProp) => app.Status === 'Offer').length,
+			Rejected: applications.value.filter((app: ApplicationProp) => app.Status === 'Rejected').length
 		}
 	});
 
@@ -62,12 +61,12 @@ export const useApplicationsStore = defineStore('applications', () => {
 
 	const exportToCSV = () => {
 		const headers = ['Company', 'Position', 'Date Applied', 'Status', 'Notes'];
-		const rows = applications.value.map((app: any) => [
-			app.company,
-			app.position,
-			app.dateApplied,
-			app.status,
-			app.notes || ''
+		const rows = applications.value.map((app: Partial<ApplicationProp>) => [
+			app.Company,
+			app.Position,
+			app.DateApplied,
+			app.Status,
+			app.Notes || ''
 		]);
 
 		const csvContent = [

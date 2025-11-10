@@ -5,6 +5,7 @@ export function useApplications() {
 	const store = useApplicationsStore();
 
 	const applications = computed(() => store.applications);
+
 	const statusCounts = computed(() => store.statusCounts);
 	const totalApplications = computed(() => store.totalApplications);
 
