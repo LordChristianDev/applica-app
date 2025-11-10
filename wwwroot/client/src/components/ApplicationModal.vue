@@ -21,7 +21,7 @@
               <div>
                 <label class="label">Company Name *</label>
                 <input
-                  v-model="formData.company"
+                  v-model="formData.Company"
                   type="text"
                   required
                   class="input"
@@ -32,7 +32,7 @@
               <div>
                 <label class="label">Position *</label>
                 <input
-                  v-model="formData.position"
+                  v-model="formData.Position"
                   type="text"
                   required
                   class="input"
@@ -43,7 +43,7 @@
               <div>
                 <label class="label">Date Applied *</label>
                 <input
-                  v-model="formData.dateApplied"
+                  v-model="formData.DateApplied"
                   type="date"
                   required
                   class="input"
@@ -52,7 +52,7 @@
 
               <div>
                 <label class="label">Status *</label>
-                <select v-model="formData.status" required class="input">
+                <select v-model="formData.Status" required class="input">
                   <option value="Applied">Applied</option>
                   <option value="Interview">Interview</option>
                   <option value="Offer">Offer</option>
@@ -63,7 +63,7 @@
               <div>
                 <label class="label">Notes</label>
                 <textarea
-                  v-model="formData.notes"
+                  v-model="formData.Notes"
                   rows="4"
                   class="input"
                   placeholder="Add any additional notes or details about this application..."
@@ -96,41 +96,48 @@
   </teleport>
 </template>
 
-<script setup>
-import { ref, watch, computed } from 'vue';
+<script setup lang="ts">
+import { ref,toRef, watch, computed } from 'vue';
+import type { ApplicationProp } from '@/stores/types/types';
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  application: {
-    type: Object,
-    default: null
-  }
+const props = withDefaults(defineProps<{
+  modelValue: boolean;
+  application: ApplicationProp | null;
+}>(), {
+  modelValue: false,
+  application: null
 });
 
 const emit = defineEmits(['update:modelValue', 'save', 'delete']);
 
 const isEditing = computed(() => !!props.application);
 
-const defaultFormData = {
-  company: '',
-  position: '',
-  dateApplied: new Date().toISOString().split('T')[0],
-  status: 'Applied',
-  notes: ''
-};
+const defaultFormData: Partial<ApplicationProp> = {
+  Id: 0,
+  UserId: 0,
+  Company: '',
+  Position: '',
+  DateApplied: '',
+  Status: 'Applied',
+  Notes: null,
+  CreatedAt: '',
+  UpdatedAt: ''
+}
+const formData = ref<Partial<ApplicationProp>>({ ...defaultFormData })
 
-const formData = ref({ ...defaultFormData });
+const application = toRef(props, 'application')
 
-watch(() => props.application, (newApp) => {
-  if (newApp) {
-    formData.value = { ...newApp }
-  } else {
-    formData.value = { ...defaultFormData }
-  }
-}, { immediate: true });
+watch(
+  application,
+  (newApp) => {
+    if (newApp) {
+      formData.value = { ...newApp }
+    } else {
+      formData.value = { ...defaultFormData }
+    }
+  },
+  { immediate: true }
+)
 
 const close = () => {
   emit('update:modelValue', false)
@@ -146,7 +153,7 @@ const handleSubmit = () => {
 
 const handleDelete = () => {
   if (confirm('Are you sure you want to delete this application?')) {
-    emit('delete', props.application.id)
+    emit('delete', props.application)
     close()
   }
 };

@@ -35,26 +35,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import draggable from 'vuedraggable';
 
 import JobCard from '@/components/JobCard.vue';
 
-const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  status: {
-    type: String,
-    required: true
-  },
-  applications: {
-    type: Array,
-    required: true
-  }
-})
+import type { ApplicationProp } from '@/stores/types/types';
+
+const props = defineProps<{
+  title: string
+  status: string
+  applications:  ApplicationProp[],
+}>();
 
 const emit = defineEmits(['edit', 'statusChange'])
 
@@ -64,13 +57,14 @@ const statusColorClass = computed(() => {
     Interview: 'bg-yellow-500',
     Offer: 'bg-green-500',
     Rejected: 'bg-red-500'
-  }
-  return colors[props.status] || 'bg-gray-500'
+  } as const
+  
+  return colors[props.status as keyof typeof colors] || 'bg-gray-500'
 })
 
-const handleChange = (event) => {
+const handleChange = (event: any) => {
   if (event.added) {
-    emit('statusChange', event.added.element.id, props.status)
+    emit('statusChange', event.added.element.Id, props.status)
   }
 }
 </script>
