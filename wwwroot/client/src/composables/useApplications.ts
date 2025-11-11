@@ -1,5 +1,8 @@
 import { computed } from 'vue';
 import { useApplicationsStore } from '@/composables/useApplicationsStore';
+import type {
+	ApplicationProp, ApplicationFormProp
+} from '@/stores/types/types';
 
 export function useApplications() {
 	const store = useApplicationsStore();
@@ -9,13 +12,15 @@ export function useApplications() {
 	const statusCounts = computed(() => store.statusCounts);
 	const totalApplications = computed(() => store.totalApplications);
 
-	const addApplication = (application: any) => store.addApplication(application);
+	const setApplications = (applications: ApplicationProp[]) => store.setApplications(applications);
 
-	const updateApplication = (id: number, updates: any) => store.updateApplication(id, updates);
+	const addApplication = (userId: number, application: ApplicationFormProp) => store.addApplication(userId, application);
+
+	const updateApplication = (id: number, userId: number, updates: ApplicationFormProp) => store.updateApplication(id, userId, updates);
 
 	const deleteApplication = (id: number) => store.deleteApplication(id);
 
-	const updateApplicationStatus = (id: number, newStatus: "Applied" | "Interview" | "Offer" | "Rejected") => store.updateApplicationStatus(id, newStatus);
+	const updateApplicationStatus = (application: ApplicationProp, newStatus: "Applied" | "Interview" | "Offer" | "Rejected") => store.updateApplicationStatus(application, newStatus);
 
 	const getApplicationsByStatus = (status: string) => store.getApplicationsByStatus(status);
 
@@ -25,6 +30,7 @@ export function useApplications() {
 		applications,
 		statusCounts,
 		totalApplications,
+		setApplications,
 		addApplication,
 		updateApplication,
 		deleteApplication,
