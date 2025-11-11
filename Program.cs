@@ -13,6 +13,16 @@ Env.Load();
 builder.Services.AddDbContext<ApplicaAppContext>(options =>
     options.UseNpgsql(Environment.GetEnvironmentVariable("NEON_CONNECTION")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowVite", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Add services to the container.
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
