@@ -1,12 +1,82 @@
 import { BASE_URL } from "@/main";
 import { tryCatch, type Result } from "@/lib/tryCatch";
-import type { ApplicationProp } from "@/stores/types/types";
+import type { ApplicationFormProp, ApplicationProp } from "@/stores/types/types";
 
 /**
  * Controllers
  */
 
-export const CONTROLLERS = {};
+export const CONTROLLERS = {
+	/**
+	 * Create New Application
+	 * @param userId 
+	 * @param args 
+	 * @returns boolean
+	 */
+	CreateNewApplication: async (
+		userId: number,
+		args: ApplicationFormProp
+	): Promise<Boolean> => {
+		if (!userId) throw new Error("No Unique Identifier");
+
+		const [data, error] = await MUTATIONS.create(userId, args);
+
+		if (error) throw new Error("Failed to create application");
+		if (!data) return false;
+
+		return true;
+	},
+	/**
+	 * Fetch All User Applications
+	 * @param userId 
+	 * @returns ApplicationProp[]
+	 */
+	FetchAllUserApplications: async (userId: number): Promise<ApplicationProp[]> => {
+		if (!userId) throw new Error("No Unique Identifier");
+
+		const [data, error] = await QUERIES.fetchAllApplicationsWithUserId(userId);
+
+		if (error) throw new Error("Failed to create application");
+		if (!data) return [];
+
+		return data as ApplicationProp[];
+	},
+	/**
+	 * Update Application
+	 * @param id 
+	 * @param updates 
+	 * @returns boolean
+	 */
+	UpdateApplication: async (
+		id: number,
+		userId: number,
+		updates: ApplicationFormProp
+	): Promise<boolean> => {
+		if (!id) throw new Error("No Unique Identifier");
+
+		const [data, error] = await MUTATIONS.update(id, userId, updates);
+
+		if (error) throw new Error("Failed to update application");
+		if (!data) return false;
+
+		return true;
+	},
+	/**
+	 * Delete Application
+	 * @param id 
+	 * @returns boolean
+	 */
+	DeleteApplication: async (id: number): Promise<boolean> => {
+		if (!id) throw new Error("No Unique Identifier");
+
+		const [data, error] = await MUTATIONS.delete(id);
+
+		if (error) throw new Error("Failed to delete application");
+		if (!data) return false;
+
+		return true;
+	},
+};
 
 /**
  * Queries
@@ -146,7 +216,10 @@ export const QUERIES = {
  */
 
 export const MUTATIONS = {
-	create: async (args: object): Promise<Result<boolean>> => {
+	create: async (
+		userId: number,
+		args: ApplicationFormProp
+	): Promise<Result<boolean>> => {
 		return tryCatch(
 			(async () => {
 				const response = await fetch(BASE_URL + `/applications/create`, {
@@ -155,7 +228,12 @@ export const MUTATIONS = {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
-						args,
+						UserId: userId,
+						Company: args.company,
+						Position: args.position,
+						DateApplied: args.dateApplied,
+						Status: args.status,
+						Notes: args.notes ?? null,
 					}),
 				});
 				const data = await response.json();
@@ -173,7 +251,8 @@ export const MUTATIONS = {
 	},
 	update: async (
 		id: number,
-		updates: object
+		userId: number,
+		updates: ApplicationFormProp
 	): Promise<Result<boolean>> => {
 		return tryCatch(
 			(async () => {
@@ -183,7 +262,13 @@ export const MUTATIONS = {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
-						updates,
+						Id: id,
+						UserId: userId,
+						Company: updates.company,
+						Position: updates.position,
+						DateApplied: updates.dateApplied,
+						Status: updates.status,
+						Notes: updates.notes ?? null,
 					}),
 				});
 				const data = await response.json();
@@ -219,94 +304,3 @@ export const MUTATIONS = {
 		);
 	},
 };
-
-export const mockApplications: ApplicationProp[] = [
-	{
-		Id: 1,
-		UserId: 1,
-		Company: 'Google',
-		Position: 'Senior Frontend Developer',
-		DateApplied: '2024-10-15',
-		Status: 'Interview',
-		Notes: 'Technical interview scheduled for next week. Focus on system design and React patterns.',
-		CreatedAt: "2025-10-28 14:59:22.535594",
-		UpdatedAt: "2025-10-28 14:59:22.535594",
-	},
-	{
-		Id: 2,
-		UserId: 1,
-		Company: 'Microsoft',
-		Position: 'Full Stack Engineer',
-		DateApplied: '2024-10-20',
-		Status: 'Applied',
-		Notes: 'Applied through LinkedIn. Referral from John at the company.',
-		CreatedAt: "2025-10-28 14:59:22.535594",
-		UpdatedAt: "2025-10-28 14:59:22.535594",
-	},
-	{
-		Id: 3,
-		UserId: 1,
-		Company: 'Meta',
-		Position: 'Software Engineer',
-		DateApplied: '2024-10-05',
-		Status: 'Offer',
-		Notes: 'Offer received! Negotiating salary and benefits package.',
-		CreatedAt: "2025-10-28 14:59:22.535594",
-		UpdatedAt: "2025-10-28 14:59:22.535594",
-	},
-	{
-		Id: 4,
-		UserId: 1,
-		Company: 'Amazon',
-		Position: 'Frontend Engineer',
-		DateApplied: '2024-09-28',
-		Status: 'Rejected',
-		Notes: 'Did not move forward after initial screening. Good learning experience.',
-		CreatedAt: "2025-10-28 14:59:22.535594",
-		UpdatedAt: "2025-10-28 14:59:22.535594",
-	},
-	{
-		Id: 5,
-		UserId: 1,
-		Company: 'Apple',
-		Position: 'UI Engineer',
-		DateApplied: '2024-10-25',
-		Status: 'Applied',
-		Notes: 'Applied for UI team. Waiting to hear back.',
-		CreatedAt: "2025-10-28 14:59:22.535594",
-		UpdatedAt: "2025-10-28 14:59:22.535594",
-	},
-	{
-		Id: 6,
-		UserId: 1,
-		Company: 'Netflix',
-		Position: 'Senior Software Engineer',
-		DateApplied: '2024-10-12',
-		Status: 'Interview',
-		Notes: 'Second round completed. Waiting for hiring manager decision.',
-		CreatedAt: "2025-10-28 14:59:22.535594",
-		UpdatedAt: "2025-10-28 14:59:22.535594",
-	},
-	{
-		Id: 7,
-		UserId: 1,
-		Company: 'Airbnb',
-		Position: 'Frontend Developer',
-		DateApplied: '2024-10-18',
-		Status: 'Applied',
-		Notes: 'Strong interest in their design system work.',
-		CreatedAt: "2025-10-28 14:59:22.535594",
-		UpdatedAt: "2025-10-28 14:59:22.535594",
-	},
-	{
-		Id: 8,
-		UserId: 1,
-		Company: 'Stripe',
-		Position: 'Product Engineer',
-		DateApplied: '2024-09-15',
-		Status: 'Rejected',
-		Notes: 'Team decided to go with more senior candidate.',
-		CreatedAt: "2025-10-28 14:59:22.535594",
-		UpdatedAt: "2025-10-28 14:59:22.535594",
-	}
-];
