@@ -9,19 +9,19 @@ import type { UserProp } from '@/stores/types/types';
 const AUTH_KEY = Symbol('auth');
 
 export type AuthContextType = {
-	currentUser: Ref<UserProp | null>;
+	currentUser: Ref<UserProp>;
 	storeUser: (data: UserProp) => void;
 	signOut: () => Promise<boolean>;
 };
 
 // Helper to get local user
-const getLocalUser = (): UserProp | null => {
+const getLocalUser = (): UserProp => {
 	const data = getItem('currentUser');
-	return data || null;
+	return data || {} as UserProp;
 };
 
 export function useAuthHook(): AuthContextType {
-	const currentUser = usePersistedRef<UserProp | null>(
+	const currentUser = usePersistedRef<UserProp>(
 		'currentUser',
 		getLocalUser()
 	);
@@ -33,7 +33,7 @@ export function useAuthHook(): AuthContextType {
 
 	const signOut = async (): Promise<boolean> => {
 		removeItem('currentUser');
-		currentUser.value = null;
+		currentUser.value = {} as UserProp;
 		return true;
 	};
 
