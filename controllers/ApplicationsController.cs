@@ -77,7 +77,7 @@ namespace ApplicaApp.Controllers
         [HttpPut("update/{id}")]
         public async Task<ActionResult<Application>> Update(int id, [FromBody] Application application)
         {
-            if (id != application.Id)
+            if (id != application.UserId)
                 return BadRequest();
 
             var updatedProduct = await _repository.UpdateAsync(application);
