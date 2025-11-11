@@ -12,7 +12,7 @@
     const { isSignedIn, isLoaded, user } = useUser();
     const { currentUser, storeUser, signOut } = useAuth();
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isFetching, isError } = useQuery({
       queryKey: ['login-user', user?.value?.id],
       queryFn: async () => USER_CONTROLLER.FetchUserByUID(user.value?.id ?? ''),
       enabled: computed(() => isLoaded.value && isSignedIn.value && !!user.value?.id),
@@ -40,10 +40,10 @@
       }
     });
 
-    watch([isLoaded, isSignedIn, user, data, isLoading, isError], async () => {
+    watch([isLoaded, isSignedIn, user, data, isFetching, isError], async () => {
       if (!isLoaded.value || !isSignedIn.value || !user.value?.id) return;
 
-      if (isLoading.value) {
+      if (isFetching.value) {
         console.log('Fetching user data...');
         return;
       }
@@ -119,13 +119,13 @@
 
       <SignInButton>
         <button
-          @click="isLoading = true"
-          :disabled="isLoading"
+          @click="isFetching = true"
+          :disabled="isFetching"
           class="w-full bg-white border-2 border-gray-300 rounded-lg px-6 py-3 flex items-center justify-center gap-3 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-medium text-gray-700 disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
         >
           <!-- Loading Spinner -->
           <svg 
-            v-if="isLoading" 
+            v-if="isFetching" 
             class="w-5 h-5 animate-spin text-gray-600" 
             xmlns="http://www.w3.org/2000/svg" 
             fill="none" 
@@ -143,7 +143,7 @@
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
           </svg>
           
-          <span>{{ isLoading ? 'Signing in...' : 'Continue with Google' }}</span>
+          <span>{{ isFetching ? 'Signing in...' : 'Continue with Google' }}</span>
         </button>
       </SignInButton>
 
