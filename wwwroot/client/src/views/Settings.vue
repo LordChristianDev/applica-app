@@ -65,30 +65,6 @@
             </div>
           </div>
         </div>
-
-        <div class="card p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">Future Enhancements</h2>
-          <ul class="space-y-2 text-sm text-gray-600">
-            <li class="flex items-start">
-              <CheckIcon />
-              Backend integration with .NET API
-            </li>
-            <li class="flex items-start">
-              <CheckIcon />
-              User authentication and cloud sync
-            </li>
-
-            <li class="flex items-start">
-                <CheckIcon />
-              Email reminders and deadline tracking
-            </li>
-
-            <li class="flex items-start">
-                <CheckIcon />
-              Advanced search and filtering
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   </div>
@@ -96,8 +72,6 @@
 
 <script setup lang="ts">
 import { useApplications } from '@/composables/useApplications';
-
-import CheckIcon from '@/assets/icons/CheckIcon.vue';
 
 const { totalApplications, exportToCSV } = useApplications();
 
