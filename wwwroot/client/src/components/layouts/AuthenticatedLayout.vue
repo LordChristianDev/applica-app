@@ -8,17 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import Sidebar from '@/components/layouts/Sidebar.vue';
-
-const router = useRouter();
-
-// Check if user is authenticated on mount
-onMounted(() => {
-  const user = localStorage.getItem('user');
-  if (!user) {
-    router.push('/login');
-  }
-});
+  import Sidebar from '@/components/layouts/Sidebar.vue';
 </script>
