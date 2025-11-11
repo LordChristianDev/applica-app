@@ -1,13 +1,21 @@
 export type ApplicationProp = {
-	Id: number;
-	UserId: number;
-	Company: string;
-	Position: string;
-	DateApplied: string;
-	Status: "Interview" | "Applied" | "Offer" | "Rejected";
-	Notes: string | null;
-	CreatedAt: string;
-	UpdatedAt: string;
+	id: number;
+	userId: number;
+	company: string;
+	position: string;
+	dateApplied: string;
+	status: "Interview" | "Applied" | "Offer" | "Rejected";
+	notes: string | null;
+	createdAt: string;
+	updatedAt: string;
+};
+
+export type ApplicationFormProp = {
+	company: string;
+	position: string;
+	dateApplied: string;
+	status: "Interview" | "Applied" | "Offer" | "Rejected";
+	notes: string | null;
 };
 
 export type ProfileProp = {
@@ -20,8 +28,8 @@ export type ProfileProp = {
 };
 
 export type UserProp = {
-	Id: number;
-	Uid: string;
-	CreatedAt: string;
-	LastLogin: string;
+	id: number;
+	uid: string;
+	createdAt: string;
+	lastLogin: string;
 };
