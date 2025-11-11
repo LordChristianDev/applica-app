@@ -1,7 +1,7 @@
 <template>
   <div class="card p-4 hover:shadow-md transition-shadow duration-200 cursor-move">
     <div class="flex items-start justify-between mb-2">
-      <h3 class="font-semibold text-gray-900 text-sm">{{ application.Company }}</h3>
+      <h3 class="font-semibold text-gray-900 text-sm">{{ application.company }}</h3>
       <button
         @click="$emit('edit', application)"
         class="text-gray-400 hover:text-gray-600 transition-colors"
@@ -12,7 +12,7 @@
       </button>
     </div>
     
-    <p class="text-gray-600 text-sm mb-3">{{ application.Position }}</p>
+    <p class="text-gray-600 text-sm mb-3">{{ application.position }}</p>
     
     <div class="flex items-center justify-between text-xs text-gray-500">
       <div class="flex items-center space-x-1">
@@ -23,12 +23,12 @@
       </div>
       
       <span :class="statusColor" class="px-2 py-0.5 rounded-full font-medium">
-        {{ application.Status }}
+        {{ application.status }}
       </span>
     </div>
     
-    <p v-if="application.Notes" class="text-xs text-gray-500 mt-3 line-clamp-2">
-      {{ application.Notes }}
+    <p v-if="application.notes" class="text-xs text-gray-500 mt-3 line-clamp-2">
+      {{ application.notes }}
     </p>
   </div>
 </template>
@@ -44,13 +44,11 @@ const props = defineProps<{
 }>()
 defineEmits(['edit']);
 
-console.log("Inside Job Card", props.application);
-
 const formattedDate = computed(() => {
   try {
-    return format(new Date(props.application.DateApplied), 'MMM d, yyyy')
+    return format(new Date(props.application.dateApplied), 'MMM d, yyyy')
   } catch {
-    return props.application.DateApplied
+    return props.application.dateApplied
   }
 });
 
@@ -61,7 +59,7 @@ const statusColor = computed(() => {
     Offer: 'bg-green-100 text-green-700',
     Rejected: 'bg-red-100 text-red-700'
   }
-  return colors[props.application.Status] || 'bg-gray-100 text-gray-700'
+  return colors[props.application.status] || 'bg-gray-100 text-gray-700'
 });
 </script>
 

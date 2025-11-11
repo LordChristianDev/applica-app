@@ -64,7 +64,7 @@ const statusColorClass = computed(() => {
 
 const handleChange = (event: any) => {
   if (event.added) {
-    emit('statusChange', event.added.element.Id, props.status)
+    emit('statusChange', event.added.element, props.status)
   }
 }
 </script>
