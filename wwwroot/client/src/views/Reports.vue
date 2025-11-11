@@ -69,13 +69,13 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="app in recentApplications" :key="app.Id">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ app.Company }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ app.Position }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatDate(app.DateApplied) }}</td>
+              <tr v-for="app in recentApplications" :key="app.id">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ app.company }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ app.position }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ formatDate(app.dateApplied) }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span :class="getStatusClass(app.Status)" class="px-2 py-1 text-xs font-medium rounded-full">
-                    {{ app.Status }}
+                  <span :class="getStatusClass(app.status)" class="px-2 py-1 text-xs font-medium rounded-full">
+                    {{ app.status }}
                   </span>
                 </td>
               </tr>
@@ -162,7 +162,7 @@ const successRate = computed(() => {
 
 const recentApplications = computed(() => {
   return [...applications.value]
-    .sort((a, b) => new Date(b.DateApplied).getTime() - new Date(a.DateApplied).getTime())
+    .sort((a, b) => new Date(b.dateApplied).getTime() - new Date(a.dateApplied).getTime())
     .slice(0, 10);
 });
 

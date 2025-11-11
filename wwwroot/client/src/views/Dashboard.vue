@@ -70,50 +70,79 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+  import { computed, ref, watch } from 'vue';
+  import { useQuery } from '@tanstack/vue-query';
+  
+  import { useAuth } from '@/composables/providers/useAuth';
+  import { useApplications } from '@/composables/useApplications';
+  import { getStatusIconClass } from '@/lib/helpers';
 
-import { useApplications } from '@/composables/useApplications';
-import { getStatusIconClass } from '@/lib/helpers';
+  import PlusIcon from '@/assets/icons/PlusIcon.vue';
+  import KanbanColumn from '@/components/KanbanColumn.vue';
+  import ApplicationModal from '@/components/ApplicationModal.vue';
 
-import PlusIcon from '@/assets/icons/PlusIcon.vue';
-import KanbanColumn from '@/components/KanbanColumn.vue';
-import ApplicationModal from '@/components/ApplicationModal.vue';
+  import type { 
+    ApplicationProp, 
+    ApplicationFormProp,
+  } from '@/stores/types/types';
+  import { CONTROLLERS as APPLICATIONS_CONTROLLER } from '@/stores/services/application-services';
 
-import type { ApplicationProp } from '@/stores/types/types';
+  const { currentUser } = useAuth();
 
-const { 
-  statusCounts,
-  totalApplications,
-  addApplication,
-  updateApplication,
-  deleteApplication,
-  updateApplicationStatus,
-  getApplicationsByStatus
-} = useApplications();
+  const { 
+    statusCounts,
+    totalApplications,
+    setApplications,
+    addApplication,
+    updateApplication,
+    deleteApplication,
+    updateApplicationStatus,
+    getApplicationsByStatus,
+  } = useApplications();
 
-const statuses = ['Applied', 'Interview', 'Offer', 'Rejected'];
-const showModal = ref(false);
-const selectedApplication = ref(null);
+  const { data, isLoading } = useQuery({
+    queryKey: ['applications', currentUser.value.id],
+    queryFn: async () => APPLICATIONS_CONTROLLER.FetchAllUserApplications(currentUser.value.id),
+    enabled: computed(() => !!currentUser.value.id),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
+    retry: 1,
+  });
 
-const openModal = (application = null) => {
-  selectedApplication.value = application;
-  showModal.value = true;
-};
+  watch([data, isLoading ], () => {
+    if (data.value && !isLoading.value) {
+      setApplications(data.value);
+    }
+  });
 
-const handleSave = (formData: Partial<ApplicationProp>) => {
-  if (selectedApplication.value) {
-    updateApplication(selectedApplication.value, formData);
-  } else {
-    addApplication(formData);
-  }
-};
+  const statuses = ['Applied', 'Interview', 'Offer', 'Rejected'];
+  const showModal = ref(false);
+  const selectedApplication = ref<ApplicationProp | null>(null);
 
-const handleDelete = (id: number) => {
-  deleteApplication(id);
-};
+  const openModal = (application = null) => {
+    selectedApplication.value = application;
+    showModal.value = true;
+  };
 
-const handleStatusChange = (applicationId: number, newStatus: "Applied" | "Interview" | "Offer" | "Rejected") => {
-  updateApplicationStatus(applicationId, newStatus);
-};
+  const handleSave = (formData: ApplicationFormProp) => {
+    if (selectedApplication.value) {
+      updateApplication(
+        (selectedApplication.value as ApplicationProp).id, 
+        currentUser.value.id,
+        formData,
+      );
+    } else {
+      addApplication(currentUser.value.id, formData);
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    deleteApplication(id);
+  };
+
+  const handleStatusChange = (application: ApplicationProp, newStatus: "Applied" | "Interview" | "Offer" | "Rejected") => {
+    updateApplicationStatus(application, newStatus);
+  };
 
 </script>
