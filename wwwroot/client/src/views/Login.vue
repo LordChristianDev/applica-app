@@ -22,12 +22,10 @@
 
     watch([isLoaded, isSignedIn], async () => {
       if (!isLoaded) {
-        console.log('Clerk is loading...');
         return;
       }
 
       if (!isSignedIn) {
-        console.log('Not signed in, redirecting to home');
         await signOut();
         move('/login');
       }
@@ -35,7 +33,6 @@
 
     watch([currentUser, user], () => {
       if ((currentUser.value as any).id && user?.value?.id) {
-        console.log('User data loaded, navigating to home');
         move('/');
       }
     });
@@ -44,18 +41,15 @@
       if (!isLoaded.value || !isSignedIn.value || !user.value?.id) return;
 
       if (isFetching.value) {
-        console.log('Fetching user data...');
         return;
       }
 
       if (data.value) {
-        console.log('Storing user data...');
         storeUser(data.value);
         return;
       }
 
       if (data.value === null) {
-        console.log('User not found, creating new user');
         await handleCreateUser();
       }
     });
@@ -64,7 +58,6 @@
       try {
         const newUser = await USER_CONTROLLER.SetupNewUser(user.value?.id ?? '');
         if (newUser) {
-          console.log('New user created successfully');
           storeUser(newUser);
         } else {
           throw new Error('Failed to create user');

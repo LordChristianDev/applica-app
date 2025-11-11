@@ -103,10 +103,9 @@
   const visible = ref(false);
 
   const close = async () => {
-    console.log("Clicked")
-      await clerk.value?.signOut();
-      await signOut();
-      move('/login');
+    await clerk.value?.signOut();
+    await signOut();
+    move('/login');
   };
 
   const navigation = computed(() => [
