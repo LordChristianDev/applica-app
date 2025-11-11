@@ -31,6 +31,18 @@
         <p class="text-xs text-gray-600">Keep up the great work!</p>
       </div>
     </div>
+
+    <div class="p-4 border-t border-gray-200">
+      <button 
+        @click="close" 
+        class="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border-2 border-red-200 rounded-lg text-red-600 font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200 shadow-sm hover:shadow-md"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span>Logout</span>
+      </button>
+    </div>
   </aside>
 
   <!-- Mobile Drawer using PrimeVue -->
@@ -71,33 +83,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import Drawer from 'primevue/drawer';
+  import { ref, computed } from 'vue';
+  import {useClerk } from '@clerk/vue';
+  import Drawer from 'primevue/drawer';
 
-import { useApplications } from '@/composables/useApplications';
+  import { useAuth as useUserAuth } from '@/composables/providers/useAuth';
+  import { useRoutes } from '@/composables/useRoutes';
+  import { useApplications } from '@/composables/useApplications';
 
-import ChartIcon from "@/assets/icons/ChartIcon.vue";
-import SettingsIcon from "@/assets/icons/SettingsIcon.vue";
-import DashboardIcon from "@/assets/icons/DashboardIcon.vue";
+  import ChartIcon from "@/assets/icons/ChartIcon.vue";
+  import SettingsIcon from "@/assets/icons/SettingsIcon.vue";
+  import DashboardIcon from "@/assets/icons/DashboardIcon.vue";
 
-const { totalApplications } = useApplications();
-const visible = ref(false);
+  const clerk = useClerk();
+  const { move } = useRoutes();
+  const { signOut } = useUserAuth();
 
-const navigation = computed(() => [
-  {
-    name: 'Dashboard',
-    path: '/',
-    icon: DashboardIcon
-  },
-  {
-    name: 'Reports',
-    path: '/reports',
-    icon: ChartIcon
-  },
-  {
-    name: 'Settings',
-    path: '/settings',
-    icon: SettingsIcon
-  }
-]);
+  const { totalApplications } = useApplications();
+  const visible = ref(false);
+
+  const close = async () => {
+    console.log("Clicked")
+      await clerk.value?.signOut();
+      await signOut();
+      move('/login');
+  };
+
+  const navigation = computed(() => [
+    {
+      name: 'Dashboard',
+      path: '/',
+      icon: DashboardIcon
+    },
+    {
+      name: 'Reports',
+      path: '/reports',
+      icon: ChartIcon
+    },
+    {
+      name: 'Settings',
+      path: '/settings',
+      icon: SettingsIcon
+    }
+  ]);
 </script>
