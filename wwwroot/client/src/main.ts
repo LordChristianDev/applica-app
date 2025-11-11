@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { clerkPlugin } from '@clerk/vue';
+import { VueQueryPlugin } from '@tanstack/vue-query'
 
 import router from './router/router';
 import App from './App.vue';
@@ -21,6 +22,7 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
+app.use(VueQueryPlugin)
 app.use(clerkPlugin, { publishableKey: PUBLISHABLE_KEY });
 
 app.mount('#app');
