@@ -6,7 +6,50 @@ import type { UserProp } from "@/stores/types/types";
  * Controllers
  */
 
-export const CONTROLLERS = {};
+export const CONTROLLER = {
+	/**
+	 * Setup New User
+	 * @param uid 
+	 * @returns UserProp
+	 */
+	SetupNewUser: async (uid: string): Promise<UserProp> => {
+		if (!uid) throw new Error("No Unique Identifier");
+
+		const [user, userError] = await QUERIES.fetchUserByUid(uid);
+
+		if (userError) throw new Error('Error checking existing user:', userError);
+
+		// User Already Exits
+		if (user) return user;
+
+		// Create New User
+		const [create, createError] = await MUTATIONS.create(uid);
+
+		// Check if There is Error when creating new user
+		if (!create || createError) throw new Error("Failed to create user");
+
+		const [newUser, newError] = await QUERIES.fetchUserByUid(uid);
+
+		// Check if There is Error when fetching new user
+		if (!newUser || newError) throw new Error("Failed to fetch user");
+
+		return newUser;
+	},
+	/**
+	 * Fetch User By UID
+	 * @param uid 
+	 * @returns UserProp | null
+	 */
+	FetchUserByUID: async (uid: string): Promise<UserProp | null> => {
+		if (!uid) throw new Error("No Unique Identifier Found");
+
+		const [data, error] = await QUERIES.fetchUserByUid(uid);
+
+		if (error) throw new Error('Error fetching user:', error);
+
+		return data;
+	},
+};
 
 /**
  * Queries
@@ -72,17 +115,13 @@ export const QUERIES = {
 					method: "GET",
 				});
 
+				if (response.status === 404) return null;
+
 				const data = await response.json();
 
-				if (!response.ok) {
-					throw new Error(data.error || "Something went wrong!");
-				}
+				if (!response.ok) throw new Error(data.error || "Something went wrong!");
 
-				let result: UserProp | null = null;
-
-				if (data) result = data;
-
-				return result;
+				return data as UserProp;
 			})()
 		);
 	},
@@ -93,17 +132,13 @@ export const QUERIES = {
 					method: "GET",
 				});
 
+				if (response.status === 404) return null;
+
 				const data = await response.json();
 
-				if (!response.ok) {
-					throw new Error(data.error || "Something went wrong!");
-				}
+				if (!response.ok) throw new Error(data.error || "Something went wrong!");
 
-				let result: UserProp | null = null;
-
-				if (data) result = data;
-
-				return result;
+				return data as UserProp;
 			})()
 		);
 	},
@@ -114,7 +149,7 @@ export const QUERIES = {
  */
 
 export const MUTATIONS = {
-	create: async (args: object): Promise<Result<boolean>> => {
+	create: async (uid: string): Promise<Result<boolean>> => {
 		return tryCatch(
 			(async () => {
 				const response = await fetch(BASE_URL + `/users/create`, {
@@ -123,14 +158,14 @@ export const MUTATIONS = {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
-						args,
+						Uid: uid,
+						CreatedAt: new Date().toISOString(),
+						LastLogin: new Date().toISOString(),
 					}),
 				});
 				const data = await response.json();
 
-				if (!response.ok) {
-					throw new Error(data.error || "Something went wrong!");
-				}
+				if (!response.ok) throw new Error(data.error || "Something went wrong!");
 
 				// Failed to Create User
 				if (!data) return false;
@@ -186,4 +221,11 @@ export const MUTATIONS = {
 			})()
 		);
 	},
+};
+
+export const mockUser: UserProp = {
+	Id: 1,
+	Uid: "0asf0s7gs89f7d",
+	CreatedAt: "2025-10-28 14:59:22.535594",
+	LastLogin: "2025-10-28 14:59:22.535594",
 };
