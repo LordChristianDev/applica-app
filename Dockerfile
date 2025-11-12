@@ -36,8 +36,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app/out .
 
-# Copy .env for DotNetEnv
-COPY .env .env
+# # Copy .env for DotNetEnv
+# COPY .env .env
 
 EXPOSE 4000
 ENV ASPNETCORE_URLS=http://+:4000
