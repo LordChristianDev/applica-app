@@ -102,7 +102,7 @@ export const useApplicationsStore = defineStore('applications', () => {
 		const url = URL.createObjectURL(blob);
 
 		link.setAttribute('href', url);
-		link.setAttribute('download', `jobtrackr_applications_${new Date().toISOString().split('T')[0]}.csv`);
+		link.setAttribute('download', `applica_applications_${new Date().toISOString().split('T')[0]}.csv`);
 		link.style.visibility = 'hidden';
 
 		document.body.appendChild(link);

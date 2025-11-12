@@ -43,13 +43,13 @@
         </div>
 
         <div class="card p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">About JobTrackr</h2>
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">About Applica</h2>
           <div class="space-y-3 text-sm text-gray-600">
             <p>
               <strong class="text-gray-900">Version:</strong> 1.0.0
             </p>
             <p>
-              JobTrackr is a modern job application tracker built with Vue 3, designed to help you
+              Applica is a modern job application tracker built with Vue 3, designed to help you
               organize and visualize your job search journey. Track applications across different stages,
               view insightful analytics, and export your data anytime.
             </p>
@@ -81,7 +81,7 @@ const handleExport = () => {
 
 const handleClearData = () => {
   if (confirm('Are you sure you want to delete all applications? This action cannot be undone.')) {
-    localStorage.removeItem('jobtrackr_applications')
+    localStorage.removeItem('applica_applications')
     window.location.reload();
   }
 };
