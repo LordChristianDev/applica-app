@@ -5,16 +5,17 @@ using ApplicaApp.Data;
 using ApplicaApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Load .env file (only in development)
-if (builder.Environment.IsDevelopment())
-{
-    Env.Load();
-}
+Env.Load();
+DotNetEnv.Env.Load();
 
 // Get connection string from environment or appsettings
-var connectionString = Environment.GetEnvironmentVariable("NEON_CONNECTION") 
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("NEON_CONNECTION");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    Console.WriteLine("❌ ERROR: NEON_CONNECTION environment variable is not set. Exiting application.");
+    Environment.Exit(1);
+}
 
 builder.Services.AddDbContext<ApplicaAppContext>(options =>
     options.UseNpgsql(connectionString));
@@ -22,21 +23,11 @@ builder.Services.AddDbContext<ApplicaAppContext>(options =>
 // CORS configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowVite", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-    
-    // Production CORS policy (adjust your-domain.com to your actual domain)
-    options.AddPolicy("Production", policy =>
-    {
-        policy.WithOrigins("https://your-domain.com", "https://www.your-domain.com")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
 
@@ -55,36 +46,50 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseCors("AllowVite");
 }
-else
-{
-    app.UseHttpsRedirection();
-    app.UseCors("Production"); // Use production CORS policy
-}
+
+// Use CORS
+app.UseCors("AllowAll");
+
+// Important: Don't use HTTPS redirection in Docker for now
+// app.UseHttpsRedirection();
 
 // Serve static files from wwwroot/client/dist
 var clientDistPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "client", "dist");
 
+Console.WriteLine($"Looking for client files at: {clientDistPath}");
+Console.WriteLine($"Directory exists: {Directory.Exists(clientDistPath)}");
+
 if (Directory.Exists(clientDistPath))
 {
+    Console.WriteLine("Files in dist:");
+    foreach (var file in Directory.GetFiles(clientDistPath, "*.*", SearchOption.AllDirectories))
+    {
+        Console.WriteLine($"  - {file}");
+    }
+
     // Serve default files (index.html)
     app.UseDefaultFiles(new DefaultFilesOptions
     {
         DefaultFileNames = new List<string> { "index.html" },
-        FileProvider = new PhysicalFileProvider(clientDistPath)
+        FileProvider = new PhysicalFileProvider(clientDistPath),
+        RequestPath = ""
     });
 
     // Serve static files (JS, CSS, images, etc.)
     app.UseStaticFiles(new StaticFileOptions
     {
         FileProvider = new PhysicalFileProvider(clientDistPath),
-        RequestPath = ""
+        RequestPath = "",
+        OnPrepareResponse = ctx =>
+        {
+            Console.WriteLine($"Serving file: {ctx.File.Name}");
+        }
     });
 }
 else
 {
-    // Fallback to default wwwroot if dist doesn't exist
+    Console.WriteLine("WARNING: Client dist directory not found! Falling back to default wwwroot");
     app.UseStaticFiles();
 }
 
@@ -96,7 +101,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Fallback to index.html for Vue Router (must be last!)
-// This handles client-side routing
 if (Directory.Exists(clientDistPath))
 {
     app.MapFallbackToFile("index.html", new StaticFileOptions
@@ -108,5 +112,7 @@ else
 {
     app.MapFallbackToFile("index.html");
 }
+
+Console.WriteLine("Application configured and ready!");
 
 app.Run();

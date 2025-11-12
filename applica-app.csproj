@@ -21,11 +21,6 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
-  <!-- Include Vue dist files in output -->
-  <ItemGroup>
-    <Content Include="wwwroot\client\dist\**" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
   <!-- Auto-build Vue app before building ASP.NET (only in Release mode) -->
   <Target Name="BuildVueApp" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release'">
     <Message Text="Installing Vue dependencies..." Importance="high" />
@@ -35,7 +30,6 @@
     <Exec WorkingDirectory="wwwroot\client" Command="npm run build" />
   </Target>
 
-  <!-- Clean Vue dist folder when cleaning project -->
   <Target Name="CleanVueApp" AfterTargets="Clean">
     <RemoveDir Directories="wwwroot\client\dist" />
     <RemoveDir Directories="wwwroot\client\node_modules" />
